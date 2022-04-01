@@ -1,4 +1,4 @@
-
+//27. 移除元素
 public class Test {
     public static void main(String[] args) {
         int[] nums = {3,2,2,3};
