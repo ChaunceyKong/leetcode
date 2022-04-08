@@ -1,6 +1,6 @@
 import java.util.*;
 
-// 146. LRU 缓存
+// 160. 相交链表
 public class Test {
 
     public static void main(String[] args) {
