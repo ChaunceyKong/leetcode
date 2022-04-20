@@ -1,7 +1,7 @@
 import java.util.LinkedList;
 
 
-//235. 二叉搜索树的最近公共祖先
+//236. 二叉树的最近公共祖先
 
 public class Test {
     public static void main(String[] args) {
@@ -12,25 +12,32 @@ public class Test {
 }
 
 class Solution {
-    // 思路：递归
+    // 思路：回溯，遇到p或q就返回，最近公共祖先满足
+    // 1.p，q分布在root异侧
+    // 2.p=root，且q在root的左或右子树中
+    // 3.q=root，且p在root的左或右子树中
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        //base case
         if (root == null) {
             return null;
         }
-        if (p.val > q.val) {
-            return lowestCommonAncestor(root,q,p);
-        }
-        if (root.val > p.val && root.val < q.val) {
+        if (root == p || root == q) {
             return root;
         }
 
-        if (root.val > p.val && root.val > q.val) {
-            return lowestCommonAncestor(root.left,p,q);
+        TreeNode left = lowestCommonAncestor(root.left,p,q);
+        TreeNode right = lowestCommonAncestor(root.right,p,q);
+
+        if (left != null && right != null) { //p,q分布在root两侧，即root就是最近公共祖先
+            return root;
         }
-        else {
-            return lowestCommonAncestor(root.right,p,q);
+
+        if (left == null && right == null) { //root左右子树都不含p，q，直接返回null
+            return null;
         }
+        return left == null?right:left;
     }
+
 }
 
 
