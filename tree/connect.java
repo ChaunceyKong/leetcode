@@ -1,58 +1,81 @@
+import java.util.*;
 
 
-//116. 填充每个节点的下一个右侧节点指针
+//117. 填充每个节点的下一个右侧节点指针 II
+
 public class Test {
-
     public static void main(String[] args) {
-        Node root = new Node(1);
-        Node n1 = new Node(2);
-        Node n2 = new Node(3);
-        Node n3 = new Node(4);
-        Node n4 = new Node(5);
-        Node n5 = new Node(6);
-        root.left = n1;
-        root.right = n4;
-        n1.left = n2;
-        n1.right = n3;
-        n4.right = n5;
 
         Solution solution = new Solution();
-        solution.connect(root);
+
 
     }
 }
 
 class Solution {
-    //思路：树的解法一般需要 递归 实现
-    //1.关注每一层
+    //思路：bfs，将同一层的左边结点next指向后一个
     public Node connect(Node root) {
         if (root == null) {
-            return null;
+            return root;
         }
-        connNode(root.left, root.right);
+
+        Queue<Node> q = new LinkedList<>();
+        q.offer(root);
+
+        while (!q.isEmpty()) {
+            int sz = q.size();
+            //遍历一层
+            for (int i = 0; i < sz; i++) {
+                Node node = q.poll();
+                if (i == sz - 1) { //此时，表示到达该层的最后一个结点，其next直接赋值null
+                    node.next = null;
+                } else { //否则next赋值为q队列对头元素
+                    node.next = q.peek();
+                }
+
+                if (node.left != null) {
+                    q.offer(node.left);
+                }
+                if (node.right != null) {
+                    q.offer(node.right);
+                }
+            }
+        }
         return root;
     }
 
-    public void connNode(Node node1, Node node2) {
-        //base case
-        if (node1 == null || node2 == null) {
-            return;
+    //思路2：改进bfs，因为bfs需要结点不停的出队入队，效率不高，可以只是用一个链表
+    public Node connect2(Node root) {
+        if (root == null) {
+            return null;
         }
 
+        Node cur = root;
 
-        node1.next = node2;
+        while (cur != null) { //退出循环时，表示这棵树遍历完成
+            Node dummyHead = new Node();
+            Node pre = dummyHead; //pre用于链接cur下一层的结点
 
-        connNode(node1.left, node1.right);
-        connNode(node2.left, node2.right);
-        connNode(node1.right, node2.left);
+            while (cur != null) { //退出循环时，表示本层遍历完
+                if (cur.left != null) {
+                    pre.next = cur.left;
+                    pre = pre.next;
+                }
+                if (cur.right != null) {
+                    pre.next = cur.right;
+                    pre = pre.next;
+                }
 
+                cur = cur.next;
+            }
+            cur = dummyHead.next; //将cur更新为下一层的第一个节点
+        }
+
+        return root;
     }
-
-
 
 }
 
-// Definition for a Node.
 class Node {
     public int val;
     public Node left;
@@ -72,3 +95,4 @@ class Node {
         next = _next;
     }
 }
+
